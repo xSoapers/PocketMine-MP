@@ -151,11 +151,9 @@ class Enchantment{
 	}
 
 	public static function getEnchantment(int $id) : ?Enchantment{
-		if($id < 0 or $id >= self::$enchantments->getSize()){
-			return null;
-		}
 		return self::$enchantments[$id] ?? null;
 	}
+
 
 	public static function getEnchantmentByName(string $name) : ?Enchantment{
 		$const = Enchantment::class . "::" . strtoupper($name);

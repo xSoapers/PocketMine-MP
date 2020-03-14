@@ -923,7 +923,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		if(parent::switchLevel($targetLevel)){
 			if($oldLevel !== null){
 				foreach($this->usedChunks as $index => $d){
-					Level::getXZ($index, $X, $Z);
+					 $X = ($index >> 32);  $Z = ($index & 0xFFFFFFFF) << 32 >> 32;
 					$this->unloadChunk($X, $Z, $oldLevel);
 				}
 			}
@@ -944,7 +944,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	 */
 	protected function unloadChunk(int $x, int $z, Level $level = null){
 		$level = $level ?? $this->level;
-		$index = Level::chunkHash($x, $z);
+		$index = ((($x) & 0xFFFFFFFF) << 32) | (( $z) & 0xFFFFFFFF);
 		if(isset($this->usedChunks[$index])){
 			foreach($level->getChunkEntities($x, $z) as $entity){
 				if($entity !== $this){
@@ -966,7 +966,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			return;
 		}
 
-		$this->usedChunks[Level::chunkHash($x, $z)] = true;
+		$this->usedChunks[((($x) & 0xFFFFFFFF) << 32) | (( $z) & 0xFFFFFFFF)] = true;
 		$this->dataPacket($payload);
 
 		if($this->spawned){
@@ -1001,7 +1001,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 			$X = null;
 			$Z = null;
-			Level::getXZ($index, $X, $Z);
+			 $X = ($index >> 32);  $Z = ($index & 0xFFFFFFFF) << 32 >> 32;
 			assert(is_int($X) and is_int($Z));
 
 			++$count;
@@ -1053,7 +1053,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			if(!$hasSent){
 				continue; //this will happen when the chunk is ready to send
 			}
-			Level::getXZ($index, $chunkX, $chunkZ);
+			 $chunkX = ($index >> 32);  $chunkZ = ($index & 0xFFFFFFFF) << 32 >> 32;
 			foreach($this->level->getChunkEntities($chunkX, $chunkZ) as $entity){
 				if($entity !== $this and !$entity->isClosed() and $entity->isAlive() and !$entity->isFlaggedForDespawn()){
 					$entity->spawnTo($this);
@@ -1109,50 +1109,50 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 				//If the chunk is in the radius, others at the same offsets in different quadrants are also guaranteed to be.
 
 				/* Top right quadrant */
-				if(!isset($this->usedChunks[$index = Level::chunkHash($centerX + $x, $centerZ + $z)]) or $this->usedChunks[$index] === false){
+				if(!isset($this->usedChunks[$index = ((($centerX + $x) & 0xFFFFFFFF) << 32) | (( $centerZ + $z) & 0xFFFFFFFF)]) or $this->usedChunks[$index] === false){
 					$newOrder[$index] = true;
 				}
 				unset($unloadChunks[$index]);
 
 				/* Top left quadrant */
-				if(!isset($this->usedChunks[$index = Level::chunkHash($centerX - $x - 1, $centerZ + $z)]) or $this->usedChunks[$index] === false){
+				if(!isset($this->usedChunks[$index = ((($centerX - $x - 1) & 0xFFFFFFFF) << 32) | (( $centerZ + $z) & 0xFFFFFFFF)]) or $this->usedChunks[$index] === false){
 					$newOrder[$index] = true;
 				}
 				unset($unloadChunks[$index]);
 
 				/* Bottom right quadrant */
-				if(!isset($this->usedChunks[$index = Level::chunkHash($centerX + $x, $centerZ - $z - 1)]) or $this->usedChunks[$index] === false){
+				if(!isset($this->usedChunks[$index = ((($centerX + $x) & 0xFFFFFFFF) << 32) | (( $centerZ - $z - 1) & 0xFFFFFFFF)]) or $this->usedChunks[$index] === false){
 					$newOrder[$index] = true;
 				}
 				unset($unloadChunks[$index]);
 
 				/* Bottom left quadrant */
-				if(!isset($this->usedChunks[$index = Level::chunkHash($centerX - $x - 1, $centerZ - $z - 1)]) or $this->usedChunks[$index] === false){
+				if(!isset($this->usedChunks[$index = ((($centerX - $x - 1) & 0xFFFFFFFF) << 32) | (( $centerZ - $z - 1) & 0xFFFFFFFF)]) or $this->usedChunks[$index] === false){
 					$newOrder[$index] = true;
 				}
 				unset($unloadChunks[$index]);
 
 				if($x !== $z){
 					/* Top right quadrant mirror */
-					if(!isset($this->usedChunks[$index = Level::chunkHash($centerX + $z, $centerZ + $x)]) or $this->usedChunks[$index] === false){
+					if(!isset($this->usedChunks[$index = ((($centerX + $z) & 0xFFFFFFFF) << 32) | (( $centerZ + $x) & 0xFFFFFFFF)]) or $this->usedChunks[$index] === false){
 						$newOrder[$index] = true;
 					}
 					unset($unloadChunks[$index]);
 
 					/* Top left quadrant mirror */
-					if(!isset($this->usedChunks[$index = Level::chunkHash($centerX - $z - 1, $centerZ + $x)]) or $this->usedChunks[$index] === false){
+					if(!isset($this->usedChunks[$index = ((($centerX - $z - 1) & 0xFFFFFFFF) << 32) | (( $centerZ + $x) & 0xFFFFFFFF)]) or $this->usedChunks[$index] === false){
 						$newOrder[$index] = true;
 					}
 					unset($unloadChunks[$index]);
 
 					/* Bottom right quadrant mirror */
-					if(!isset($this->usedChunks[$index = Level::chunkHash($centerX + $z, $centerZ - $x - 1)]) or $this->usedChunks[$index] === false){
+					if(!isset($this->usedChunks[$index = ((($centerX + $z) & 0xFFFFFFFF) << 32) | (( $centerZ - $x - 1) & 0xFFFFFFFF)]) or $this->usedChunks[$index] === false){
 						$newOrder[$index] = true;
 					}
 					unset($unloadChunks[$index]);
 
 					/* Bottom left quadrant mirror */
-					if(!isset($this->usedChunks[$index = Level::chunkHash($centerX - $z - 1, $centerZ - $x - 1)]) or $this->usedChunks[$index] === false){
+					if(!isset($this->usedChunks[$index = ((($centerX - $z - 1) & 0xFFFFFFFF) << 32) | (( $centerZ - $x - 1) & 0xFFFFFFFF)]) or $this->usedChunks[$index] === false){
 						$newOrder[$index] = true;
 					}
 					unset($unloadChunks[$index]);
@@ -1161,7 +1161,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		}
 
 		foreach($unloadChunks as $index => $bool){
-			Level::getXZ($index, $X, $Z);
+			 $X = ($index >> 32);  $Z = ($index & 0xFFFFFFFF) << 32 >> 32;
 			$this->unloadChunk($X, $Z);
 		}
 
@@ -1595,7 +1595,8 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 				if($to->distanceSquared($ev->getTo()) > 0.01){ //If plugins modify the destination
 					$this->teleport($ev->getTo());
 				}else{
-					$this->broadcastMovement();
+					//TODO: workaround 1.14.30 bug: MoveActor(Absolute|Delta)Packet don't work on players anymore :(
+					$this->sendPosition($this, $this->yaw, $this->pitch, MovePlayerPacket::MODE_NORMAL, $this->hasSpawned);
 
 					$distance = sqrt((($from->x - $to->x) ** 2) + (($from->z - $to->z) ** 2));
 					//TODO: check swimming (adds 0.015 exhaustion in MCPE)
@@ -2083,7 +2084,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		/** @var float[] $pos */
 		$pos = $this->namedtag->getListTag("Pos")->getAllValues();
 		$this->level->registerChunkLoader($this, ((int) floor($pos[0])) >> 4, ((int) floor($pos[2])) >> 4, true);
-		$this->usedChunks[Level::chunkHash(((int) floor($pos[0])) >> 4, ((int) floor($pos[2])) >> 4)] = false;
+		$this->usedChunks[(((((int) floor($pos[0])) >> 4) & 0xFFFFFFFF) << 32) | (( ((int) floor($pos[2])) >> 4) & 0xFFFFFFFF)] = false;
 
 		parent::__construct($this->level, $this->namedtag);
 		$ev = new PlayerLoginEvent($this, "Plugin reason");
@@ -2249,10 +2250,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	}
 
 	public function handleEntityEvent(ActorEventPacket $packet) : bool{
-		if($packet->entityRuntimeId !== $this->id){
-			//TODO HACK: EATING_ITEM is sent back to the server when the server sends it for other players (1.14 bug, maybe earlier)
-			return $packet->event === ActorEventPacket::EATING_ITEM;
-		}
 		if(!$this->spawned or !$this->isAlive()){
 			return true;
 		}
@@ -2392,7 +2389,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 							$item = $this->inventory->getItemInHand();
 							$oldItem = clone $item;
 							if($this->level->useItemOn($blockVector, $item, $face, $packet->trData->clickPos, $this, true)){
-								if(!$item->equalsExact($oldItem) and $oldItem->equalsExact($this->inventory->getItemInHand())){
+								if(!$item->equalsExact($oldItem)){
 									$this->inventory->setItemInHand($item);
 									$this->inventory->sendHeldItem($this->hasSpawned);
 								}
@@ -2424,7 +2421,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 						if($this->canInteract($blockVector->add(0.5, 0.5, 0.5), $this->isCreative() ? 13 : 7) and $this->level->useBreakOn($blockVector, $item, $this, true)){
 							if($this->isSurvival()){
-								if(!$item->equalsExact($oldItem) and $oldItem->equalsExact($this->inventory->getItemInHand())){
+								if(!$item->equalsExact($oldItem)){
 									$this->inventory->setItemInHand($item);
 									$this->inventory->sendHeldItem($this->hasSpawned);
 								}
@@ -2594,7 +2591,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 						if($this->isAlive()){
 							//reactive damage like thorns might cause us to be killed by attacking another mob, which
 							//would mean we'd already have dropped the inventory by the time we reached here
-							if($heldItem->onAttackEntity($target) and $this->isSurvival() and $heldItem->equalsExact($this->inventory->getItemInHand())){ //always fire the hook, even if we are survival
+							if($heldItem->onAttackEntity($target) and $this->isSurvival()){ //always fire the hook, even if we are survival
 								$this->inventory->setItemInHand($heldItem);
 							}
 
@@ -3465,7 +3462,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 			if($this->isValid()){
 				foreach($this->usedChunks as $index => $d){
-					Level::getXZ($index, $chunkX, $chunkZ);
+					 $chunkX = ($index >> 32);  $chunkZ = ($index & 0xFFFFFFFF) << 32 >> 32;
 					$this->level->unregisterChunkLoader($this, $chunkX, $chunkZ);
 					foreach($this->level->getChunkEntities($chunkX, $chunkZ) as $entity){
 						$entity->despawnFrom($this);
@@ -3933,7 +3930,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	}
 
 	public function onChunkChanged(Chunk $chunk){
-		if(isset($this->usedChunks[$hash = Level::chunkHash($chunk->getX(), $chunk->getZ())])){
+		if(isset($this->usedChunks[$hash = ((($chunk->getX()) & 0xFFFFFFFF) << 32) | (( $chunk->getZ()) & 0xFFFFFFFF)])){
 			$this->usedChunks[$hash] = false;
 			$this->nextChunkOrderRun = 0;
 		}

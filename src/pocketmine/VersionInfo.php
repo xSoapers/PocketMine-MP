@@ -35,4 +35,4 @@ const _VERSION_INFO_INCLUDED = true;
 const NAME = "Minecrush-MP";
 const BASE_VERSION = "3.11.7";
 const IS_DEVELOPMENT_BUILD = false;
-const BUILD_NUMBER = 0;
+const BUILD_NUMBER = 666;

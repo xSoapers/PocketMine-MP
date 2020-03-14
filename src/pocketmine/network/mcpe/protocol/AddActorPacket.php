@@ -143,7 +143,8 @@ class AddActorPacket extends DataPacket{
 		EntityIds::PHANTOM => "minecraft:phantom",
 		EntityIds::TRIPOD_CAMERA => "minecraft:tripod_camera",
 		EntityIds::BEE => "minecraft:bee",
-		EntityIds::RAVAGER => "minecraft:ravager"
+		EntityIds::RAVAGER => "minecraft:ravager",
+		EntityIds::FOX => "minecraft:fox"
 	];
 
 	/** @var int|null */

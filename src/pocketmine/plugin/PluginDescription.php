@@ -89,6 +89,7 @@ class PluginDescription{
 
 	/**
 	 * @param string|mixed[] $yamlString
+	 * @phpstan-param string|array<string, mixed> $yamlString
 	 */
 	public function __construct($yamlString){
 		$this->loadMap(!is_array($yamlString) ? yaml_parse($yamlString) : $yamlString);
@@ -96,6 +97,7 @@ class PluginDescription{
 
 	/**
 	 * @param mixed[] $plugin
+	 * @phpstan-param array<string, mixed> $plugin
 	 * @throws PluginException
 	 */
 	private function loadMap(array $plugin) : void{

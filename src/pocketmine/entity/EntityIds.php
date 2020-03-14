@@ -129,4 +129,5 @@ interface EntityIds{
 	public const PANDA = 113;
 	public const BEE = 114;
 	public const RAVAGER = 115;
+	public const FOX = 116;
 }

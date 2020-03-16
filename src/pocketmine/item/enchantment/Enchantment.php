@@ -216,6 +216,13 @@ class Enchantment{
 		return self::get(self::VANISHING);
 	}
 
+        public static function fromString(string $name) : ?Enchantment{
+		$const = Enchantment::class . "::" . strtoupper($name);
+		if(defined($const)){
+			return self::get(constant($const));
+		}
+		return null;
+
 	//endregion
 
 	/**

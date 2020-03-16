@@ -19,20 +19,9 @@
  *
 */
 
-declare(strict_types=1);
-
 namespace pocketmine;
 
-use function defined;
-
-// composer autoload doesn't use require_once and also pthreads can inherit things
-// TODO: drop this file and use a final class with constants
-if(defined('pocketmine\_VERSION_INFO_INCLUDED')){
-	return;
-}
-const _VERSION_INFO_INCLUDED = true;
-
-const NAME = "Minecrush-MP";
-const BASE_VERSION = "3.11.7";
-const IS_DEVELOPMENT_BUILD = false;
+const NAME = "MineCrush-MP";
+const BASE_VERSION = "3.11.3";
+const IS_DEVELOPMENT_BUILD = true;
 const BUILD_NUMBER = 666;

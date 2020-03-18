@@ -42,8 +42,4 @@ class EnchantmentList{
 	public function getSlot(int $slot) : EnchantmentEntry{
 		return $this->enchantments[$slot];
 	}
-
-	public function getSize() : int{
-		return $this->enchantments->getSize();
-	}
 }
